@@ -44,7 +44,7 @@ var Mediator = (function(window, undefined) {
  
 	return Mediator;
  
-} )( window );
+})(window);
  
 // example subscriber function
 var Subscriber = function ExampleSubscriber(myVariable) {
