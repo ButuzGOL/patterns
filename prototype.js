@@ -1,19 +1,27 @@
-var vehicle = {
-  getModel: function() {
-    console.log("The model of this vehicle is.." + this.model);
-  }
+// build our blueprint object
+var MyBluePrint = function MyBluePrintObject() {
+  
+  this.someFunction = function someFunction() {
+    alert('some function');
+  };
+  
+  this.someOtherFunction = function someOtherFunction() {
+    alert('some other function');
+  };
+  
+  this.showMyName = function showMyName() {
+    alert(this.name);
+  };
+  
 };
  
-var car = Object.create(vehicle, {
-  "id": {
-    value: 1,
-    // writable:false, configurable:false by default
-    enumerable: true
-  },
+function MyObject() {
+  this.name = 'testing';
+}
+MyObject.prototype = new MyBluePrint();
  
-  "model": {
-    value: "Ford",
-    enumerable: true
-  }
- 
-});
+// example usage
+var testObject = new MyObject();
+testObject.someFunction(); // alerts "some function"
+testObject.someOtherFunction(); // alerts "some other function"
+testObject.showMyName(); // alerts "testing"
