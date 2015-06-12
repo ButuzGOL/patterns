@@ -1,86 +1,43 @@
-// A constructor for defining new cars
-function Car(options) {
-  // some defaults
-  this.doors = options.doors || 4;
-  this.state = options.state || "brand new";
-  this.color = options.color || "silver";
+function CarDoor(options) {
+  this.color = options.color || 'red';
+  this.side = options.side || 'right';
+  this.hasPowerWindows = options.hasPowerWindows || true;
 }
  
-// A constructor for defining new trucks
-function Truck(options) {
-  this.state = options.state || "used";
-  this.wheelSize = options.wheelSize || "large";
-  this.color = options.color || "blue";
+function CarSeat(options) {
+  this.color = options.color || 'gray';
+  this.material = options.material || 'leather';
+  this.isReclinable = options.isReclinable || true;
 }
-
-// Define a skeleton vehicle factory
-function VehicleFactory() {}
  
-// Define the prototypes and utilities for this factory
- 
-// Our default vehicleClass is Car
-VehicleFactory.prototype.vehicleClass = Car;
- 
-// Our Factory method for creating new Vehicle instances
-VehicleFactory.prototype.createVehicle = function(options) {
- 
-  switch(options.vehicleType) {
-    case "car":
-      this.vehicleClass = Car;
-      break;
-    case "truck":
-      this.vehicleClass = Truck;
-      break;
-    //defaults to VehicleFactory.prototype.vehicleClass (Car)
+function CarPartFactory() {}
+CarPartFactory.prototype.createPart = function createCarPart(options) {
+  var parentClass = null;
+  
+  if (options.partType === 'door') {
+    parentClass = CarDoor;
+  } else if (options.partType === 'seat') {
+    parentClass = CarSeat;
   }
+  
+  if (parentClass === null) {
+    return false;
+  }
+  
+  return new parentClass( options );
+}
  
-  return new this.vehicleClass(options);
-};
+// example usage
+var myPartFactory = new CarPartFactory();
+var seat = myPartFactory.createPart({
+  partType: 'seat',
+  material: 'leather',
+  color: 'blue',
+  isReclinable: false
+});
  
-// Create an instance of our factory that makes cars
-var carFactory = new VehicleFactory();
-var car = carFactory.createVehicle({
-            vehicleType: "car",
-            color: "yellow",
-            doors: 6 });
+// outputs: true
+console.log(seat instanceof CarSeat);
  
-// Test to confirm our car was created using the vehicleClass/prototype Car
- 
-// Outputs: true
-console.log(car instanceof Car);
- 
-// Outputs: Car object of color "yellow", doors: 6 in a "brand new" state
-console.log(car);
-
-var movingTruck = carFactory.createVehicle( {
-                      vehicleType: "truck",
-                      state: "like new",
-                      color: "red",
-                      wheelSize: "small" } );
- 
-// Test to confirm our truck was created with the vehicleClass/prototype Truck
- 
-// Outputs: true
-console.log(movingTruck instanceof Truck);
- 
-// Outputs: Truck object of color "red", a "like new" state
-// and a "small" wheelSize
-console.log(movingTruck);
-
-function TruckFactory () {}
-TruckFactory.prototype = new VehicleFactory();
-TruckFactory.prototype.vehicleClass = Truck;
- 
-var truckFactory = new TruckFactory();
-var myBigTruck = truckFactory.createVehicle( {
-                    state: "omg..so bad.",
-                    color: "pink",
-                    wheelSize: "so big" } );
- 
-// Confirms that myBigTruck was created with the prototype Truck
-// Outputs: true
-console.log(myBigTruck instanceof Truck);
- 
-// Outputs: Truck object with the color "pink", wheelSize "so big"
-// and state "omg. so bad"
-console.log(myBigTruck);
+// outputs a CarSeat object with material "leather", color "blue", isReclinable "false"
+console.log(seat);
