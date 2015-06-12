@@ -1,103 +1,85 @@
-var pubsub = {};
- 
-(function(myObject) {
- 
-  // Storage for topics that can be broadcast
-  // or listened to
-  var topics = {};
- 
-  // An topic identifier
-  var subUid = -1;
- 
-  // Publish or broadcast events of interest
-  // with a specific topic name and arguments
-  // such as the data to pass along
-  myObject.publish = function(topic, args) {
- 
-    if (!topics[topic]) {
-      return false;
-    }
- 
-    var subscribers = topics[topic];
-    var len = subscribers ? subscribers.length : 0;
+// build the Subject base class
+var Subject = (function(window, undefined) {
 
-    while(len--) {
-      subscribers[len].func(topic, args);
-    }
+  function Subject() {
+    this._list = [];
+  }
 
-    return this;
+  // this method will handle adding observers to the internal list
+  Subject.prototype.observe = function observeObject(obj) {
+    console.log('added new observer');
+    this._list.push(obj);
   };
- 
-  // Subscribe to events of interest
-  // with a specific topic name and a
-  // callback function, to be executed
-  // when the topic/event is observed
-  myObject.subscribe = function(topic, func) {
- 
-    if (!topics[topic]) {
-      topics[topic] = [];
-    }
-
-    var token = (++subUid).toString();
-    topics[topic].push({
-      token: token,
-      func: func
-    });
-    return token;
-  };
- 
-  // Unsubscribe from a specific
-  // topic, based on a tokenized reference
-  // to the subscription
-  myObject.unsubscribe = function(token) {
-    for(var m in topics) {
-      if (topics[m]) {
-        for(var i = 0, j = topics[m].length; i < j; i++) {
-          if (topics[m][i].token === token) {
-            topics[m].splice(i, 1);
-            return token;
-          }
-        }
+  
+  Subject.prototype.unobserve = function unobserveObject(obj) {
+    for(var i = 0, len = this._list.length; i < len; i++) {
+      if (this._list[i] === obj) {
+        this._list.splice(i, 1);
+        console.log('removed existing observer');
+        return true;
       }
     }
-    return this;
+    return false;
   };
-}(pubsub));
+  
+  Subject.prototype.notify = function notifyObservers() {
+    var args = Array.prototype.slice.call(arguments, 0);
+    for(var i = 0, len = this._list.length; i < len; i++) {
+      this._list[i].update.apply(null, args);
+    }
+  };
+
+  return Subject;
+
+})(window);
+
+// setup an object that fetchs stocks
+function StockGrabber() {
+  
+  var subject = new Subject();
+  
+  this.addObserver = function addObserver(newObserver) {
+    subject.observe(newObserver);
+  };
+  
+  this.removeObserver = function removeObserver(deleteObserver) {
+    subject.unobserve(deleteObserver);
+  };
+  
+  this.fetchStocks = function fetchStocks() {
+    // fake fetching the stocks
+    var stocks = {
+      aapl: 167.00,
+      goog: 243.67,
+      msft: 99.34
+    };
+    
+    // notify our observers of the stock change
+    subject.notify(stocks);
+  };
+  
+}
+
+// define a couple of different observers
+var StockUpdaterComponent = {
+  update: function() {
+    console.log('"update" called on StockUpdater with: ', arguments);
+  }
+};
+var StockChartsComponent = {
+  update: function() {
+    console.log('"update" called on StockCharts with: ', arguments);
+  }
+};
 
 // Usage:
 
-// Another simple message handler
- 
-// A simple message logger that logs any topics and data received through our
-// subscriber
-var messageLogger = function(topics, data) {
-  console.log("Logging: " + topics + ": " + data);
-};
- 
-// Subscribers listen for topics they have subscribed to and
-// invoke a callback function (e.g messageLogger) once a new
-// notification is broadcast on that topic
-var subscription = pubsub.subscribe("inbox/newMessage", messageLogger);
- 
-// Publishers are in charge of publishing topics or notifications of
-// interest to the application. e.g:
- 
-pubsub.publish("inbox/newMessage", "hello world!");
- 
-// or
-pubsub.publish("inbox/newMessage", ["test", "a", "b", "c"]);
- 
-// or
-pubsub.publish("inbox/newMessage", {
-  sender: "hello@google.com",
-  body: "Hey again!"
-});
- 
-// We can also unsubscribe if we no longer wish for our subscribers
-// to be notified
-pubsub.unsubscribe(subscription);
- 
-// Once unsubscribed, this for example won't result in our
-// messageLogger being executed as the subscriber is
-// no longer listening
-pubsub.publish("inbox/newMessage", "Hello! are you still there?");
+var stockApp = new StockGrabber();
+stockApp.addObserver(StockUpdaterComponent);
+stockApp.fetchStocks(); // console logs: "update" called on StockUpdater with...
+stockApp.addObserver(StockChartsComponent);
+stockApp.fetchStocks(); // console logs: "update" called on StockUpdater with... "update" called on StockCarts with...
+stockApp.removeObserver(StockUpdaterComponent);
+stockApp.fetchStocks(); // console logs: "update" called on StockCharts with...
+stockApp.removeObserver(StockChartsComponent);
+stockApp.fetchStocks(); // does nothing; no observers
