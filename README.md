@@ -2,7 +2,7 @@
 A Collection of JavaScript patterns
 
 ### Module pattern
-```
+```javascript
 var basketModule = (function() {
   // privates
  
@@ -79,7 +79,7 @@ console.log(basket);
 ```
 
 ### Singleton pattern
-```
+```javascript
 var mySingleton = (function() {
  
   // Instance stores a reference to the Singleton
@@ -138,7 +138,7 @@ console.log(singleA.getRandomNumber() === singleB.getRandomNumber()); // true
 ```
 
 ### Observer pattern
-```
+```javascript
 // build the Subject base class
 var Subject = (function(window, undefined) {
 
@@ -227,7 +227,7 @@ stockApp.fetchStocks(); // does nothing; no observers
 ```
 
 ### Mediator pattern
-```
+```javascript
 var Mediator = (function(window, undefined) {
  
   function Mediator() {
@@ -288,7 +288,7 @@ myMediator.publish('some event', 'foo bar'); // console logs "foo bar"
 ```
 
 ### Prototype pattern
-```
+```javascript
 // build our blueprint object
 var MyBluePrint = function MyBluePrintObject() {
   
@@ -319,7 +319,7 @@ testObject.showMyName(); // alerts "testing"
 ```
 
 ### Command pattern
-```
+```javascript
 var carManager = {
 
   // request information
@@ -352,7 +352,7 @@ carManager.execute("buyVehicle", "Ford Escort", "34232");
 ```
 
 ### Facade pattern
-```
+```javascript
 var module = (function() {
   var _private = {
     i: 5,
@@ -386,7 +386,7 @@ module.facade({ run: true, val: 10 });
 ```
 
 ### Factory pattern
-```
+```javascript
 function CarDoor(options) {
   this.color = options.color || 'red';
   this.side = options.side || 'right';
@@ -433,7 +433,7 @@ console.log(seat);
 ```
 
 ### Mixin pattern
-```
+```javascript
 // Define a simple Car constructor
 var Car = function(settings) {
   this.model = settings.model || "no model provided";
@@ -522,7 +522,7 @@ mySportsCar.driveSideways();
 ```
 
 ### Decorator pattern
-```
+```javascript
 // A vehicle constructor
 function Vehicle(vehicleType) {
   // some sane defaults
