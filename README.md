@@ -1,6 +1,17 @@
 # Patterns
 A Collection of JavaScript patterns
 
+- [Module pattern](#module-pattern)
+- [Singleton pattern](#singleton-pattern)
+- [Observer pattern](#observer-pattern)
+- [Mediator pattern](#mediator-pattern)
+- [Prototype pattern](#prototype-pattern)
+- [Command pattern](#command-pattern)
+- [Facade pattern](#facade-pattern)
+- [Factory pattern](#factory-pattern)
+- [Mixin pattern](#mixin-pattern)
+- [Decorator pattern](#decorator-pattern)
+
 ### Module pattern
 ```javascript
 var basketModule = (function() {
